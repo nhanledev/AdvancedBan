@@ -2,8 +2,6 @@ package me.leoko.advancedban.bungee;
 
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import me.leoko.advancedban.Universal;
-import me.leoko.advancedban.bungee.cloud.CloudSupport;
-import me.leoko.advancedban.bungee.cloud.CloudSupportHandler;
 import me.leoko.advancedban.bungee.listener.ChatListenerBungee;
 import me.leoko.advancedban.bungee.listener.ConnectionListenerBungee;
 import me.leoko.advancedban.bungee.listener.InternalListener;
@@ -15,15 +13,8 @@ public class BungeeMain extends Plugin {
 
     private static BungeeMain instance;
 
-    private static CloudSupport cloudSupport;
-
-
     public static BungeeMain get() {
         return instance;
-    }
-
-    public static CloudSupport getCloudSupport() {
-        return cloudSupport;
     }
 
     @Override
@@ -34,9 +25,6 @@ public class BungeeMain extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerListener(this, new ChatListenerBungee());
         ProxyServer.getInstance().getPluginManager().registerListener(this, new InternalListener());
         ProxyServer.getInstance().registerChannel("advancedban:main");
-
-        cloudSupport = CloudSupportHandler.getCloudSystem();
-
 
         if (ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null) {
             Universal.setRedis(true);

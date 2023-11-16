@@ -23,12 +23,10 @@ import java.sql.SQLException;
  */
 public class DatabaseManager {
 
+    private static DatabaseManager instance = null;
     private HikariDataSource dataSource;
     private boolean useMySQL;
-
     private RowSetFactory factory;
-    
-    private static DatabaseManager instance = null;
 
     /**
      * Get the instance of the command manager
@@ -64,9 +62,9 @@ public class DatabaseManager {
      */
     public void shutdown() {
         if (!useMySQL) {
-            try(Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")){
+            try (Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")) {
                 statement.execute();
-            }catch (SQLException | NullPointerException exc){
+            } catch (SQLException | NullPointerException exc) {
                 Universal.get().log("An unexpected error has occurred turning off the database");
                 Universal.get().debugException(exc);
             }
@@ -74,12 +72,12 @@ public class DatabaseManager {
 
         dataSource.close();
     }
-    
+
     private CachedRowSet createCachedRowSet() throws SQLException {
-    	if (factory == null) {
-    		factory = RowSetProvider.newFactory();
-    	}
-    	return factory.createCachedRowSet();
+        if (factory == null) {
+            factory = RowSetProvider.newFactory();
+        }
+        return factory.createCachedRowSet();
     }
 
     /**
@@ -108,27 +106,27 @@ public class DatabaseManager {
     }
 
     private synchronized ResultSet executeStatement(String sql, boolean result, Object... parameters) {
-    	try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
 
-    		for (int i = 0; i < parameters.length; i++) {
-    			statement.setObject(i + 1, parameters[i]);
-    		}
+            for (int i = 0; i < parameters.length; i++) {
+                statement.setObject(i + 1, parameters[i]);
+            }
 
-    		if (result) {
-    			CachedRowSet results = createCachedRowSet();
-    			results.populate(statement.executeQuery());
-    			return results;
-    		}
-   			statement.execute();
-    	} catch (SQLException ex) {
-    		Universal.get().log(
-   					"An unexpected error has occurred executing an Statement in the database\n"
-   							+ "Please check the plugins/AdvancedBan/logs/latest.log file and report this "
-    						+ "error in: https://github.com/DevLeoko/AdvancedBan/issues"
-    				);
-    		Universal.get().debug("Query: \n" + sql);
-    		Universal.get().debugSqlException(ex);
-       	} catch (NullPointerException ex) {
+            if (result) {
+                CachedRowSet results = createCachedRowSet();
+                results.populate(statement.executeQuery());
+                return results;
+            }
+            statement.execute();
+        } catch (SQLException ex) {
+            Universal.get().log(
+                    "An unexpected error has occurred executing an Statement in the database\n"
+                            + "Please check the plugins/AdvancedBan/logs/latest.log file and report this "
+                            + "error in: https://github.com/DevLeoko/AdvancedBan/issues"
+            );
+            Universal.get().debug("Query: \n" + sql);
+            Universal.get().debugSqlException(ex);
+        } catch (NullPointerException ex) {
             Universal.get().log(
                     "An unexpected error has occurred connecting to the database\n"
                             + "Check if your MySQL data is correct and if your MySQL-Server is online\n"

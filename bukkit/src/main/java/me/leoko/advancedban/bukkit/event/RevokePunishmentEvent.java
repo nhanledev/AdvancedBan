@@ -18,16 +18,16 @@ public class RevokePunishmentEvent extends Event {
         this.massClear = massClear;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public Punishment getPunishment() {
         return punishment;
     }
 
     public boolean isMassClear() {
         return massClear;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

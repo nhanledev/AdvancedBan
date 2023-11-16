@@ -131,9 +131,9 @@ public enum Command {
     UN_WARN("ab." + PunishmentType.WARNING.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
-                if(args.length == 1) {
+                if (args.length == 1) {
                     return list("[ID]", "clear");
-                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
+                } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
@@ -170,9 +170,9 @@ public enum Command {
     UN_NOTE("ab." + PunishmentType.NOTE.getName() + ".undo",
             "[0-9]+|(?i:clear \\S+)",
             new CleanTabCompleter((user, args) -> {
-                if(args.length == 1) {
+                if (args.length == 1) {
                     return list("[ID]", "clear");
-                }else if(args.length == 2 && args[0].equalsIgnoreCase("clear")){
+                } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
                 } else {
                     return list();
@@ -217,13 +217,13 @@ public enum Command {
     CHANGE_REASON("ab.changeReason",
             "([0-9]+|(?i)(ban|mute) \\S+) .+",
             new CleanTabCompleter((user, args) -> {
-                if(args.length <= 1) {
+                if (args.length <= 1) {
                     return list("<ID>", "ban", "mute");
-                }else {
+                } else {
                     boolean playerTarget = args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("mute");
-                    if(args.length == 2 && playerTarget){
+                    if (args.length == 2 && playerTarget) {
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
-                    } else if((playerTarget && args.length == 3) || args.length == 2){
+                    } else if ((playerTarget && args.length == 3) || args.length == 2) {
                         return list("new reason...");
                     } else {
                         return list();
@@ -281,9 +281,9 @@ public enum Command {
     HISTORY("ab.history",
             "\\S+( [1-9][0-9]*)?",
             new CleanTabCompleter((user, args) -> {
-                if(args.length == 1)
+                if (args.length == 1)
                     return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
-                else if(args.length == 2)
+                else if (args.length == 2)
                     return list("<Page>");
                 else
                     return list();
@@ -297,12 +297,12 @@ public enum Command {
     WARNS(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter((user, args) -> {
-                if(args.length == 1)
-                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                if (args.length == 1)
+                    if (Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if(args.length == 2 && !args[0].matches("\\d+"))
+                else if (args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
                     return list();
@@ -335,12 +335,12 @@ public enum Command {
     NOTES(null,
             "\\S+( [1-9][0-9]*)?|\\S+|",
             new CleanTabCompleter((user, args) -> {
-                if(args.length == 1)
-                    if(Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
+                if (args.length == 1)
+                    if (Universal.get().getMethods().hasPerms(user, "ab.notes.other"))
                         return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "<Name>", "<Page>");
                     else
                         return list("<Page>");
-                else if(args.length == 2 && !args[0].matches("\\d+"))
+                else if (args.length == 2 && !args[0].matches("\\d+"))
                     return list("<Page>");
                 else
                     return list();
@@ -544,20 +544,6 @@ public enum Command {
         this(permission, (args) -> String.join(" ", args).matches(regex), tabCompleter, commandHandler, usagePath, names);
     }
 
-    public boolean validateArguments(String[] args) {
-        return syntaxValidator.test(args);
-    }
-
-    public void execute(Object player, String[] args) {
-        commandHandler.accept(new CommandInput(player, args));
-    }
-
-
-
-    public TabCompleter getTabCompleter() {
-        return tabCompleter;
-    }
-
     public static Command getByName(String name) {
         String lowerCase = name.toLowerCase();
         for (Command command : values()) {
@@ -567,6 +553,18 @@ public enum Command {
             }
         }
         return null;
+    }
+
+    public boolean validateArguments(String[] args) {
+        return syntaxValidator.test(args);
+    }
+
+    public void execute(Object player, String[] args) {
+        commandHandler.accept(new CommandInput(player, args));
+    }
+
+    public TabCompleter getTabCompleter() {
+        return tabCompleter;
     }
 
     public String getPermission() {

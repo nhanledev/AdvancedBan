@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author Beelzebu
  */
 public class InternalListener implements Listener {

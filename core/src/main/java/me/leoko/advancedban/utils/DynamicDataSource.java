@@ -19,7 +19,7 @@ public class DynamicDataSource {
             int port = mi.getInteger(mi.getMySQLFile(), "MySQL.Port", 3306);
 
             Class.forName("com.mysql.jdbc.Driver");
-            config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?"+properties);
+            config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?" + properties);
             config.setUsername(usrName);
             config.setPassword(password);
         } else {
@@ -33,7 +33,7 @@ public class DynamicDataSource {
         }
     }
 
-    public HikariDataSource generateDataSource(){
+    public HikariDataSource generateDataSource() {
         return new HikariDataSource(config);
     }
 }

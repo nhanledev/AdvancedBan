@@ -29,23 +29,11 @@ import java.util.Scanner;
 public class Universal {
 
     private static Universal instance = null;
-
-    public static void setRedis(boolean redis) {
-        Universal.redis = redis;
-    }
-
+    private static boolean redis = false;
     private final Map<String, String> ips = new HashMap<>();
+    private final Gson gson = new Gson();
     private MethodInterface mi;
     private LogManager logManager;
-
-    private static boolean redis = false;
-
-
-    private final Gson gson = new Gson();
-
-
-
-
 
     /**
      * Get universal.
@@ -54,6 +42,14 @@ public class Universal {
      */
     public static Universal get() {
         return instance == null ? instance = new Universal() : instance;
+    }
+
+    public static boolean isRedis() {
+        return redis;
+    }
+
+    public static void setRedis(boolean redis) {
+        Universal.redis = redis;
     }
 
     /**
@@ -104,7 +100,7 @@ public class Universal {
                     + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS &r"
                     + "\n&8| &cTwitter: &7@LeokoGar&r"
                     + "\n&8| &cUpdate:&r"
-                    + "\n&8|   &7" + upt  + "&r"
+                    + "\n&8|   &7" + upt + "&r"
                     + "\n&8[]================================[]&r\n ");
         } else {
             mi.log("&cEnabling AdvancedBan on Version &7&r" + mi.getVersion());
@@ -158,10 +154,6 @@ public class Universal {
         return ips;
     }
 
-    public static boolean isRedis() {
-        return redis;
-    }
-
     public Gson getGson() {
         return gson;
     }
@@ -199,7 +191,7 @@ public class Universal {
 
     /**
      * Visible for testing. Do not use this. Please use {@link #isMuteCommand(String)}.
-     * 
+     *
      * @param cmd          the command
      * @param muteCommands the mute commands from the config
      * @return true if the command matched any of the mute commands.
@@ -220,9 +212,9 @@ public class Universal {
 
     /**
      * Visible for testing. Do not use this.
-     * 
+     *
      * @param commandWords the command run by a player, separated into its words
-     * @param muteCommand a mute command from the config
+     * @param muteCommand  a mute command from the config
      * @return true if they match, false otherwise
      */
     boolean muteCommandMatches(String[] commandWords, String muteCommand) {

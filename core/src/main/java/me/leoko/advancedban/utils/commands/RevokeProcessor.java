@@ -23,7 +23,7 @@ public class RevokeProcessor implements Consumer<Command.CommandInput> {
         String name = input.getPrimary();
 
         String target = name;
-        if(!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+        if (!target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
             target = processName(input);
             if (target == null)
                 return;

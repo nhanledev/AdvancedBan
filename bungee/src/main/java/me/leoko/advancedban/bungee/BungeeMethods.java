@@ -10,7 +10,6 @@ import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.bungee.event.RevokePunishmentEvent;
 import me.leoko.advancedban.bungee.listener.CommandReceiverBungee;
-import me.leoko.advancedban.bungee.utils.CloudNetCloudPermsOfflineUser;
 import me.leoko.advancedban.bungee.utils.LuckPermsOfflineUser;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -49,26 +48,19 @@ public class BungeeMethods implements MethodInterface {
     private final File messageFile = new File(getDataFolder(), "Messages.yml");
     private final File layoutFile = new File(getDataFolder(), "Layouts.yml");
     private final File mysqlFile = new File(getDataFolder(), "MySQL.yml");
+    private final Function<String, Permissionable> permissionableGenerator;
     private Configuration config;
     private Configuration messages;
     private Configuration layouts;
     private Configuration mysql;
 
-    private final Function<String, Permissionable> permissionableGenerator;
-
     public BungeeMethods() {
         if (ProxyServer.getInstance().getPluginManager().getPlugin("LuckPerms") != null) {
             permissionableGenerator = LuckPermsOfflineUser::new;
-
             log("[AdvancedBan] Offline permission support through LuckPerms active");
-        } else if (ProxyServer.getInstance().getPluginManager().getPlugin("CloudNet-CloudPerms") != null) {
-            permissionableGenerator = CloudNetCloudPermsOfflineUser::new;
-
-            log("[AdvancedBan] Offline permission support through CloudNet-CloudPerms active");
         } else {
             permissionableGenerator = null;
-
-            log("[AdvancedBan] No offline permission support through LuckPerms or CloudNet-CloudPerms");
+            log("[AdvancedBan] No offline permission support through LuckPerms");
         }
     }
 
@@ -226,9 +218,7 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public void kickPlayer(String player, String reason) {
-        if(BungeeMain.getCloudSupport() != null){
-            BungeeMain.getCloudSupport().kick(getPlayer(player).getUniqueId(), reason);
-        }else if (Universal.isRedis()) {
+        if (Universal.isRedis()) {
             RedisBungee.getApi().sendChannelMessage("advancedban:main", "kick " + player + " " + reason);
         } else {
             getPlayer(player).disconnect(TextComponent.fromLegacyText(reason));

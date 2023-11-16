@@ -20,10 +20,6 @@ public class PunishmentManager {
     private final Set<Punishment> punishments = Collections.synchronizedSet(new HashSet<>());
     private final Set<Punishment> history = Collections.synchronizedSet(new HashSet<>());
     private final Set<String> cached = Collections.synchronizedSet(new HashSet<>());
-    
-    private Universal universal() {
-    	return Universal.get();
-    }
 
     /**
      * Get the punishment manager.
@@ -32,6 +28,10 @@ public class PunishmentManager {
      */
     public static synchronized PunishmentManager get() {
         return instance == null ? instance = new PunishmentManager() : instance;
+    }
+
+    private Universal universal() {
+        return Universal.get();
     }
 
     /**
@@ -72,7 +72,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
-        	Universal universal = universal();
+            Universal universal = universal();
             universal.log("An error has occurred loading the punishments from the database.");
             universal.debugSqlException(ex);
             return null;
@@ -143,7 +143,7 @@ public class PunishmentManager {
                     }
                 }
             } catch (SQLException ex) {
-            	Universal universal = universal();
+                Universal universal = universal();
                 universal.log("An error has occurred getting the punishments for " + target);
                 universal.debugSqlException(ex);
             }
@@ -170,7 +170,7 @@ public class PunishmentManager {
             }
             rs.close();
         } catch (SQLException ex) {
-        	Universal universal = universal();
+            Universal universal = universal();
             universal.log("An error has occurred executing a query in the database.");
             universal.debug("Query: \n" + sqlQuery);
             universal.debugSqlException(ex);
@@ -199,7 +199,7 @@ public class PunishmentManager {
                     return punishment;
             }
         } catch (SQLException ex) {
-        	Universal universal = universal();
+            Universal universal = universal();
             universal.log("An error has occurred getting a punishment by his id.");
             universal.debug("Punishment id: '" + id + "'");
             universal.debugSqlException(ex);
@@ -231,30 +231,32 @@ public class PunishmentManager {
      */
     public List<Punishment> getWarns(String uuid) {
         return getPunishments(uuid, PunishmentType.WARNING, true);
-    } /**
+    }
+
+    /**
      * Get an active note by id.
-    *
-    * @param id the id
-    * @return the note
-    */
-   public Punishment getNote(int id) {
-       Punishment punishment = getPunishment(id);
+     *
+     * @param id the id
+     * @return the note
+     */
+    public Punishment getNote(int id) {
+        Punishment punishment = getPunishment(id);
 
-       if (punishment == null)
-           return null;
+        if (punishment == null)
+            return null;
 
-       return punishment.getType().getBasic() == PunishmentType.NOTE ? punishment : null;
-   }
+        return punishment.getType().getBasic() == PunishmentType.NOTE ? punishment : null;
+    }
 
-   /**
-    * Get a players active note.
-    *
-    * @param uuid the players uuid
-    * @return the note
-    */
-   public List<Punishment> getNotes(String uuid) {
-       return getPunishments(uuid, PunishmentType.NOTE, true);
-   }
+    /**
+     * Get a players active note.
+     *
+     * @param uuid the players uuid
+     * @return the note
+     */
+    public List<Punishment> getNotes(String uuid) {
+        return getPunishments(uuid, PunishmentType.NOTE, true);
+    }
 
     /**
      * Get a players active ban.
@@ -341,7 +343,7 @@ public class PunishmentManager {
             }
 
         } catch (SQLException ex) {
-        	Universal universal = universal();
+            Universal universal = universal();
             universal.log("An error has occurred getting the level for the layout '" + layout + "' for '" + uuid + "'");
             universal.debugSqlException(ex);
         }
@@ -357,6 +359,7 @@ public class PunishmentManager {
     public int getCurrentWarns(String uuid) {
         return getWarns(uuid).size();
     }
+
     /**
      * Get how many notes a player has.
      *

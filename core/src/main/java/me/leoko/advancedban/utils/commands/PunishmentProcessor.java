@@ -23,59 +23,6 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         this.type = type;
     }
 
-    @Override
-    public void accept(Command.CommandInput input) {
-        boolean silent = processTag(input, "-s");
-        String name = input.getPrimary();
-
-        // extract target
-        String target = type.isIpOrientated()
-                ? processIP(input)
-                : processName(input);
-        if (target == null)
-            return;
-
-        // is exempted
-        if (processExempt(name, target, input.getSender(), type))
-            return;
-
-        // calculate duration if necessary
-        Long end = -1L;
-        String timeTemplate = "";
-        if (type.isTemp()) {
-            TimeCalculation calculation = processTime(input, target, type);
-            if (calculation == null)
-                return;
-
-            end = calculation.time;
-
-            if (calculation.template != null)
-                timeTemplate = calculation.template;
-        }
-
-
-        // build reason
-        String reason = processReason(input);
-        if (reason == null)
-            return;
-        else if (reason.isEmpty())
-            reason = null;
-
-        // check if punishment of this type is already active
-        if (alreadyPunished(target, type)) {
-            MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".AlreadyDone",
-                    true, "NAME", name);
-            return;
-        }
-
-        MethodInterface mi = Universal.get().getMethods();
-        String operator = mi.getName(input.getSender());
-        Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
-
-        MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".Done",
-                true, "NAME", name);
-    }
-
     // Removes time argument and returns timestamp (null if failed)
     private static TimeCalculation processTime(Command.CommandInput input, String uuid, PunishmentType type) {
         String time = input.getPrimary();
@@ -171,6 +118,59 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private static boolean alreadyPunished(String target, PunishmentType type) {
         return (type.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(target))
                 || (type.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(target));
+    }
+
+    @Override
+    public void accept(Command.CommandInput input) {
+        boolean silent = processTag(input, "-s");
+        String name = input.getPrimary();
+
+        // extract target
+        String target = type.isIpOrientated()
+                ? processIP(input)
+                : processName(input);
+        if (target == null)
+            return;
+
+        // is exempted
+        if (processExempt(name, target, input.getSender(), type))
+            return;
+
+        // calculate duration if necessary
+        Long end = -1L;
+        String timeTemplate = "";
+        if (type.isTemp()) {
+            TimeCalculation calculation = processTime(input, target, type);
+            if (calculation == null)
+                return;
+
+            end = calculation.time;
+
+            if (calculation.template != null)
+                timeTemplate = calculation.template;
+        }
+
+
+        // build reason
+        String reason = processReason(input);
+        if (reason == null)
+            return;
+        else if (reason.isEmpty())
+            reason = null;
+
+        // check if punishment of this type is already active
+        if (alreadyPunished(target, type)) {
+            MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".AlreadyDone",
+                    true, "NAME", name);
+            return;
+        }
+
+        MethodInterface mi = Universal.get().getMethods();
+        String operator = mi.getName(input.getSender());
+        Punishment.create(name, target, reason, operator, type, end, timeTemplate, silent);
+
+        MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".Done",
+                true, "NAME", name);
     }
 
     private static class TimeCalculation {
